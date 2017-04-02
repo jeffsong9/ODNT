@@ -17,9 +17,9 @@ definition=function(i){
   return(cbind(POS, def))
 }
 
-gen_syn=function(i){
-  def_syn=syn[[i]] %>% gsub(".*>(.*?)<.*", "\\1",.)
-  m=length(def_syn)
-  def_syn2=cbind(matrix(rep(c(POS[i], TTL[i]), each=m), ncol=2), def_syn)
-  return(def_syn2)
-}
+# gen_syn=function(i){
+#   def_syn=syn[[i]] %>% gsub(".*>(.*?)<.*", "\\1",.)
+#   m=length(def_syn)
+#   def_syn2=cbind(matrix(rep(c(POS[i], TTL[i]), each=m), ncol=2), def_syn)
+#   return(def_syn2)
+# }

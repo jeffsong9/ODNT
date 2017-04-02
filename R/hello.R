@@ -57,10 +57,8 @@ get_def=function(voc){
 #' get_syn("great")
 
 get_syn=function(voc){
-  initial_url="http://www.thesaurus.com/browse/VOCAB?s=t"
-  url=sub("VOCAB", voc, initial_url)
+  html<-sub("VOCAB", voc, "http://www.thesaurus.com/browse/VOCAB?s=t") %>% get_html()
   path=c(xml='//div [@class="synonyms"]',POS='//div [@class="synonyms"]//div [@class="synonym-description"]', TTL='//div [@class="synonyms"]//div [@class="synonym-description"]//strong [@class="ttl"]')
-  html=get_html(url)
   if(length(html)!=1){
     get_xml=lapply(path, function(x) html_nodes(html, xpath = x))
     POS=get_xml$POS %>% html_text %>% sub("\r\n {2,}(.*?)\r\n.*", "\\1", .) 
@@ -75,7 +73,10 @@ get_syn=function(voc){
     } else{
       # n is the number of different definitions
       n=length(POS)
-      all_syn=lapply(1:n, function(i) gen_syn(i)) %>% do.call("rbind",.)
+      all_syn=lapply(1:n, function(i) {def_syn=syn[[i]] %>% gsub(".*>(.*?)<.*", "\\1",.);
+                     m=length(def_syn);
+                     def_syn2=cbind(matrix(rep(c(POS[i], TTL[i]), each=m), ncol=2), def_syn);
+                     return(def_syn2)}) %>% do.call("rbind",.)
       m=nrow(all_syn)
       origin_data=rep(voc, each=m)
       cbind(origin_data, all_syn) %>% data.frame(stringsAsFactors=F) -> Syn
